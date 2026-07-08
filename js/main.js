@@ -1,5 +1,10 @@
 export const COLORS = ["red", "blue", "green", "yellow", "purple", "orange"];
 
+// The one teacher account for this deployment. Create it once in the
+// Supabase dashboard (Authentication → Users → Add user) with this exact
+// email — see README for steps. Students never see a sign-up option.
+export const TEACHER_EMAIL = "teacher@wordquest.local";
+
 export function renderTopbar(active) {
   const links = [
     { href: "index.html", label: "Home" },
