@@ -1,5 +1,5 @@
 import { supabase } from "./supabaseClient.js";
-import { renderTopbar, rollDie, qs } from "./main.js";
+import { renderTopbar, rollDie, qs, genJoinCode } from "./main.js";
 
 document.getElementById("topbar").innerHTML = renderTopbar();
 
@@ -74,7 +74,7 @@ function renderPath() {
       const isStart = s.position === 0;
       const isFinish = s.position === finishPos;
       const cls = isStart ? "space start" : isFinish ? "space finish" : `space${s.is_special ? " special" : ""}`;
-      const here = players.filter((p) => p.position === s.position);
+      const here = players.filter((p) => !p.is_spectator && p.position === s.position);
       const tokens = here.map((p) => `<div class="token token-${p.color}" title="${p.name}"></div>`).join("");
       const body = isStart || isFinish
         ? `<div>${isStart ? "START" : "FINISH"}</div>`
@@ -90,8 +90,15 @@ function renderPath() {
 function renderPlayerList() {
   document.getElementById("playerList").innerHTML =
     players
-      .map(
-        (p) => `
+      .map((p) =>
+        p.is_spectator
+          ? `
+      <div class="player-row">
+        <div class="token" style="background:transparent;border:2px dashed var(--ink-soft);"></div>
+        <div class="name">${p.name}${p.id === myPlayerId ? " (you)" : ""} · watching</div>
+        <div class="pos"></div>
+      </div>`
+          : `
       <div class="player-row">
         <div class="token token-${p.color}"></div>
         <div class="name">${p.name}${p.id === myPlayerId ? " (you)" : ""}${p.is_finished ? " 🏁" : ""}</div>
@@ -105,30 +112,36 @@ function renderTurnBanner() {
   const banner = document.getElementById("turnBanner");
   const rollBtn = document.getElementById("rollBtn");
   const label = document.getElementById("myPlayerLabel");
+  const newGameBtn = document.getElementById("newGameBtn");
   const me = players.find((p) => p.id === myPlayerId);
+  const activePlayers = players.filter((p) => !p.is_spectator);
+
+  newGameBtn.classList.toggle("hidden", !(me && me.is_spectator));
 
   if (session.status === "finished") {
     banner.textContent = "🎉 Game finished!";
     rollBtn.disabled = true;
+    label.textContent = me ? (me.is_spectator ? "You're watching." : `You are ${me.name}`) : "";
     return;
   }
-  if (!players.length) {
+  if (!activePlayers.length) {
     banner.textContent = "Waiting for players to join…";
     rollBtn.disabled = true;
+    label.textContent = me && me.is_spectator ? "You're watching." : "";
     return;
   }
 
-  const current = players.find((p) => p.turn_order === session.current_turn_order);
+  const current = activePlayers.find((p) => p.turn_order === session.current_turn_order);
   banner.textContent = current ? `🎲 ${current.name}'s turn` : "Waiting…";
-  label.textContent = me ? `You are ${me.name}` : "You're spectating — join to play.";
+  label.textContent = me ? (me.is_spectator ? "You're watching." : `You are ${me.name}`) : "You're spectating — join to play.";
 
-  const myTurn = me && current && me.id === current.id && !me.is_finished;
+  const myTurn = me && !me.is_spectator && current && me.id === current.id && !me.is_finished;
   rollBtn.disabled = !myTurn;
 }
 
 document.getElementById("rollBtn").addEventListener("click", async () => {
   const me = players.find((p) => p.id === myPlayerId);
-  if (!me) return;
+  if (!me || me.is_spectator) return;
   const diceEl = document.getElementById("diceEl");
   diceEl.classList.add("rolling");
   const roll = rollDie(board.dice_type);
@@ -154,7 +167,7 @@ document.getElementById("rollBtn").addEventListener("click", async () => {
   await supabase.from("players").update({ position: newPos, is_finished: finished }).eq("id", me.id);
 
   const { data: freshPlayers } = await supabase.from("players").select("*").eq("session_id", session.id);
-  const stillActive = (freshPlayers || []).filter((p) => !p.is_finished);
+  const stillActive = (freshPlayers || []).filter((p) => !p.is_spectator && !p.is_finished);
 
   if (!stillActive.length) {
     await supabase.from("game_sessions").update({ status: "finished" }).eq("id", session.id);
@@ -167,6 +180,17 @@ document.getElementById("rollBtn").addEventListener("click", async () => {
       .update({ status: "playing", current_turn_order: next.turn_order })
       .eq("id", session.id);
   }
+});
+
+document.getElementById("newGameBtn").addEventListener("click", async () => {
+  if (!confirm("End this game for everyone and start a fresh one on this board?")) return;
+  await supabase.from("game_sessions").update({ status: "finished" }).eq("id", session.id);
+  const { data: newSession } = await supabase
+    .from("game_sessions")
+    .insert({ board_id: board.id, join_code: genJoinCode(), status: "waiting", current_turn_order: 0 })
+    .select()
+    .single();
+  window.location.href = `board.html?board=${boardNumber}&session=${newSession.join_code}`;
 });
 
 init();
