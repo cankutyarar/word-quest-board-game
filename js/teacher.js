@@ -1,5 +1,5 @@
 import { supabase } from "./supabaseClient.js";
-import { renderTopbar, escapeHtml } from "./main.js";
+import { renderTopbar, escapeHtml, TEACHER_EMAIL } from "./main.js";
 
 document.getElementById("topbar").innerHTML = renderTopbar();
 
@@ -12,7 +12,6 @@ async function refreshAuthUI() {
   if (session) {
     document.getElementById("loginCard").classList.add("hidden");
     document.getElementById("dashboard").classList.remove("hidden");
-    document.getElementById("teacherEmail").textContent = session.user.email;
     await loadSettings();
     await loadBoards();
   } else {
@@ -22,20 +21,14 @@ async function refreshAuthUI() {
 }
 
 document.getElementById("signInBtn").addEventListener("click", async () => {
-  const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value;
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  document.getElementById("loginMsg").textContent = error ? error.message : "";
+  const { error } = await supabase.auth.signInWithPassword({ email: TEACHER_EMAIL, password });
+  document.getElementById("loginMsg").textContent = error ? "Incorrect password." : "";
   if (!error) refreshAuthUI();
 });
 
-document.getElementById("signUpBtn").addEventListener("click", async () => {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value;
-  const { error } = await supabase.auth.signUp({ email, password });
-  document.getElementById("loginMsg").textContent = error
-    ? error.message
-    : "Account created. Check your email if confirmation is required, then sign in.";
+document.getElementById("loginPassword").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") document.getElementById("signInBtn").click();
 });
 
 document.getElementById("signOutBtn").addEventListener("click", async () => {
