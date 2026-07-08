@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Teacher Dashboard — Word Quest</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="topbar"></div>
+
+<div class="wrap">
+
+  <!-- LOGIN -->
+  <div class="card" id="loginCard">
+    <h2>Teacher sign in</h2>
+    <p class="muted">Sign in to edit boards, spaces, and rules. Students never need to log in.</p>
+    <div class="field"><label>Email</label><input type="email" id="loginEmail" /></div>
+    <div class="field"><label>Password</label><input type="password" id="loginPassword" /></div>
+    <div class="row">
+      <button class="btn btn-primary" id="signInBtn">Sign in</button>
+      <button class="btn btn-outline" id="signUpBtn">Create teacher account</button>
+    </div>
+    <p class="muted" id="loginMsg"></p>
+  </div>
+
+  <!-- DASHBOARD (shown after login) -->
+  <div id="dashboard" class="hidden">
+    <div class="card row between">
+      <div><strong id="teacherEmail"></strong></div>
+      <button class="btn btn-outline btn-sm" id="signOutBtn">Sign out</button>
+    </div>
+
+    <div class="card">
+      <h2>Site rules & guides</h2>
+      <div class="field"><label>Rules text (shown on Home page)</label><textarea id="rulesText" rows="4"></textarea></div>
+      <div class="field"><label>Player token guide</label><textarea id="tokenGuide" rows="3"></textarea></div>
+      <div class="field"><label>Dice guide</label><textarea id="diceGuide" rows="3"></textarea></div>
+      <button class="btn btn-teal" id="saveSettingsBtn">Save guides</button>
+      <span class="muted" id="settingsMsg"></span>
+    </div>
+
+    <div class="card">
+      <h2>Boards</h2>
+      <p class="muted">Pick a board to edit its name, dice type, win rule, and landing spaces.</p>
+      <div class="row" id="boardTabs"></div>
+    </div>
+
+    <div class="card hidden" id="boardEditor">
+      <div class="field"><label>Board name</label><input type="text" id="boardName" /></div>
+      <div class="row">
+        <div class="field" style="flex:1;">
+          <label>Dice</label>
+          <select id="boardDice"><option value="d4">d4 (1-4)</option><option value="d6">d6 (1-6)</option></select>
+        </div>
+        <div class="field" style="flex:1;">
+          <label>Win rule</label>
+          <select id="boardWinRule">
+            <option value="overshoot">Overshoot wins (any roll ≥ remaining distance wins)</option>
+            <option value="exact">Exact landing required (must roll exact number to finish)</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-teal btn-sm" id="saveBoardBtn">Save board settings</button>
+      <span class="muted" id="boardMsg"></span>
+
+      <h3 class="mt">Landing spaces</h3>
+      <p class="muted">Space 0 is always Start, and the last space is always Finish. Add or remove spaces in between.</p>
+      <div id="spacesEditor"></div>
+      <div class="row mt">
+        <button class="btn btn-primary btn-sm" id="addSpaceBtn">+ Add space</button>
+        <button class="btn btn-outline btn-sm" id="shuffleBtn">🔀 Shuffle space order</button>
+        <button class="btn btn-teal btn-sm" id="saveSpacesBtn">Save spaces</button>
+        <span class="muted" id="spacesMsg"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/teacher.js"></script>
+</body>
+</html>

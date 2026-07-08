@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Play — Word Quest</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="topbar"></div>
+
+<div class="wrap">
+
+  <div class="card hidden" id="noSessionCard">
+    <h2 id="boardTitleNoSession"></h2>
+    <p class="muted">No active game yet for this board.</p>
+    <a class="btn btn-primary" id="goJoinBtn" href="#">Start / join a game</a>
+  </div>
+
+  <div id="gameArea" class="hidden">
+    <div class="card row between">
+      <div>
+        <h2 id="boardTitle"></h2>
+        <span class="muted">Code: <code class="joincode" id="codeShown"></code> · <span id="diceLabel" class="pill"></span></span>
+      </div>
+      <a class="btn btn-outline btn-sm" id="joinAnotherBtn" href="#">+ Add player</a>
+    </div>
+
+    <div class="turn-banner" id="turnBanner"></div>
+
+    <div class="board-shell">
+      <div class="path" id="pathEl"></div>
+    </div>
+
+    <div class="card row between mt">
+      <div class="row">
+        <div class="dice" id="diceEl">?</div>
+        <button class="btn btn-primary" id="rollBtn" disabled>Roll dice</button>
+      </div>
+      <div id="myPlayerLabel" class="muted"></div>
+    </div>
+
+    <div class="card">
+      <h3>Players</h3>
+      <div id="playerList"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/board.js"></script>
+</body>
+</html>

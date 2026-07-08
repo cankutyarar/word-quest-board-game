@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Join Game — Word Quest</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="topbar"></div>
+
+<div class="wrap">
+
+  <div class="card" id="sessionCard">
+    <h2>Start or join a game — <span id="boardNameLabel"></span></h2>
+    <div class="row">
+      <button class="btn btn-primary" id="startBtn">Start a new game</button>
+    </div>
+    <p class="muted mt">Already have a code from your teacher or classmate?</p>
+    <div class="row">
+      <input type="text" id="codeInput" placeholder="e.g. 7Q2XK" style="max-width:180px; text-transform:uppercase;" />
+      <button class="btn btn-teal" id="joinCodeBtn">Join with code</button>
+    </div>
+    <p class="muted" id="sessionMsg"></p>
+  </div>
+
+  <div class="card hidden" id="nameCard">
+    <div class="row between">
+      <h2>Game code: <code class="joincode" id="codeDisplay"></code></h2>
+    </div>
+    <p class="muted">Share this code with classmates so they can join the same game.</p>
+
+    <div class="field"><label>Your name</label><input type="text" id="playerName" /></div>
+
+    <label>Pick your color</label>
+    <div class="color-grid" id="colorGrid"></div>
+
+    <button class="btn btn-primary mt" id="joinBtn" disabled>Join game</button>
+    <p class="muted" id="joinMsg"></p>
+  </div>
+
+</div>
+
+<script type="module" src="js/join.js"></script>
+</body>
+</html>

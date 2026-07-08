@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Word Quest — Language Board Game</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="topbar"></div>
+
+<div class="wrap">
+  <div class="card">
+    <h1>Word Quest 🎲</h1>
+    <p class="muted">A customizable board game for the language classroom. Pick a board below, roll the dice, and answer your way to the finish.</p>
+  </div>
+
+  <div class="card">
+    <h2>Choose a board</h2>
+    <div class="grid-4" id="boardList"></div>
+  </div>
+
+  <div class="card">
+    <h2>How to play</h2>
+    <div id="rulesText" class="muted">Loading…</div>
+  </div>
+
+  <div class="card">
+    <h2>Player tokens</h2>
+    <div id="tokenGuide" class="muted">Loading…</div>
+  </div>
+
+  <div class="card">
+    <h2>Dice</h2>
+    <div id="diceGuide" class="muted">Loading…</div>
+  </div>
+</div>
+
+<script type="module">
+  import { supabase } from "./js/supabaseClient.js";
+  import { renderTopbar } from "./js/main.js";
+
+  document.getElementById("topbar").innerHTML = renderTopbar();
+
+  async function load() {
+    const { data: settings } = await supabase.from("site_settings").select("*").eq("id", 1).single();
+    if (settings) {
+      document.getElementById("rulesText").innerHTML = (settings.rules_text || "").replace(/\n/g, "<br>");
+      document.getElementById("tokenGuide").innerHTML = (settings.token_guide || "").replace(/\n/g, "<br>");
+      document.getElementById("diceGuide").innerHTML = (settings.dice_guide || "").replace(/\n/g, "<br>");
+    }
+
+    const { data: boards } = await supabase.from("boards").select("*").order("board_number");
+    const list = document.getElementById("boardList");
+    list.innerHTML = (boards || [])
+      .map(
+        (b) => `
+      <div class="card" style="margin:0;">
+        <span class="pill pill-${b.dice_type}">${b.dice_type.toUpperCase()}</span>
+        <h3>${b.name}</h3>
+        <p class="muted" style="text-transform:capitalize;">Win rule: ${b.win_rule}</p>
+        <a class="btn btn-primary btn-sm" href="join.html?board=${b.board_number}">Play this board</a>
+      </div>`
+      )
+      .join("");
+  }
+
+  load();
+</script>
+</body>
+</html>
