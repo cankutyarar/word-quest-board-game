@@ -13,21 +13,17 @@
 
   <!-- LOGIN -->
   <div class="card" id="loginCard">
-    <h2>Teacher sign in</h2>
-    <p class="muted">Sign in to edit boards, spaces, and rules. Students never need to log in.</p>
-    <div class="field"><label>Email</label><input type="email" id="loginEmail" /></div>
+    <h2>Teacher access</h2>
+    <p class="muted">Enter the teacher password to edit boards, spaces, and rules.</p>
     <div class="field"><label>Password</label><input type="password" id="loginPassword" /></div>
-    <div class="row">
-      <button class="btn btn-primary" id="signInBtn">Sign in</button>
-      <button class="btn btn-outline" id="signUpBtn">Create teacher account</button>
-    </div>
+    <button class="btn btn-primary" id="signInBtn">Enter</button>
     <p class="muted" id="loginMsg"></p>
   </div>
 
   <!-- DASHBOARD (shown after login) -->
   <div id="dashboard" class="hidden">
     <div class="card row between">
-      <div><strong id="teacherEmail"></strong></div>
+      <div><strong>Teacher dashboard</strong></div>
       <button class="btn btn-outline btn-sm" id="signOutBtn">Sign out</button>
     </div>
 
