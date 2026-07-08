@@ -11,31 +11,37 @@
 
 <div class="wrap">
 
-  <div class="card" id="sessionCard">
-    <h2>Start or join a game — <span id="boardNameLabel"></span></h2>
-    <div class="row">
-      <button class="btn btn-primary" id="startBtn">Start a new game</button>
-    </div>
-    <p class="muted mt">Already have a code from your teacher or classmate?</p>
-    <div class="row">
-      <input type="text" id="codeInput" placeholder="e.g. 7Q2XK" style="max-width:180px; text-transform:uppercase;" />
-      <button class="btn btn-teal" id="joinCodeBtn">Join with code</button>
-    </div>
-    <p class="muted" id="sessionMsg"></p>
+  <!-- Shown while no game exists yet for this board -->
+  <div class="card hidden" id="waitingCard">
+    <h2 id="waitingBoardName"></h2>
+    <p class="muted">This board hasn't started yet. Ask your teacher to start it — this page will update automatically.</p>
+
+    <details class="mt">
+      <summary class="muted" style="cursor:pointer;">I'm the teacher</summary>
+      <div class="field mt"><label>Teacher password</label><input type="password" id="teacherStartPw" /></div>
+      <button class="btn btn-teal btn-sm" id="teacherStartBtn">Start this board</button>
+      <p class="muted" id="teacherStartMsg"></p>
+    </details>
   </div>
 
+  <!-- Shown once a game exists -->
   <div class="card hidden" id="nameCard">
-    <div class="row between">
-      <h2>Game code: <code class="joincode" id="codeDisplay"></code></h2>
-    </div>
-    <p class="muted">Share this code with classmates so they can join the same game.</p>
+    <h2 id="boardNameLabel"></h2>
 
     <div class="field"><label>Your name</label><input type="text" id="playerName" /></div>
 
-    <label>Pick your color</label>
-    <div class="color-grid" id="colorGrid"></div>
+    <div id="colorSection">
+      <label>Pick your color</label>
+      <div class="color-grid" id="colorGrid"></div>
+      <button class="btn btn-primary mt" id="joinBtn" disabled>Join game</button>
+    </div>
 
-    <button class="btn btn-primary mt" id="joinBtn" disabled>Join game</button>
+    <details class="mt">
+      <summary class="muted" style="cursor:pointer;">I'm the teacher</summary>
+      <div class="field mt"><label>Teacher password</label><input type="password" id="teacherJoinPw" /></div>
+      <button class="btn btn-teal btn-sm" id="teacherJoinBtn">Join as spectator</button>
+    </details>
+
     <p class="muted" id="joinMsg"></p>
   </div>
 
