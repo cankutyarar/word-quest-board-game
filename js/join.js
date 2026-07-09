@@ -31,6 +31,17 @@ async function findSession() {
   session = (data && data[0]) || null;
 
   if (session) {
+    // Already joined this session on this device? Skip straight back in.
+    const savedPlayerId = localStorage.getItem(`wq_player_${session.id}`);
+    if (savedPlayerId) {
+      const { data: existing } = await supabase.from("players").select("id").eq("id", savedPlayerId).single();
+      if (existing) {
+        window.location.href = `board.html?board=${boardNumber}&session=${session.join_code}`;
+        return;
+      }
+      localStorage.removeItem(`wq_player_${session.id}`);
+    }
+
     document.getElementById("waitingCard").classList.add("hidden");
     document.getElementById("nameCard").classList.remove("hidden");
     subscribeToTaken();
