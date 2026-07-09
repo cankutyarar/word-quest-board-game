@@ -17,7 +17,6 @@ async function init() {
   board = b;
   document.getElementById("boardTitleNoSession").textContent = board ? board.name : `Board ${boardNumber}`;
   document.getElementById("goJoinBtn").href = `join.html?board=${boardNumber}`;
-  document.getElementById("joinAnotherBtn").href = `join.html?board=${boardNumber}`;
 
   if (!joinCode) {
     document.getElementById("noSessionCard").classList.remove("hidden");
@@ -113,10 +112,12 @@ function renderTurnBanner() {
   const rollBtn = document.getElementById("rollBtn");
   const label = document.getElementById("myPlayerLabel");
   const newGameBtn = document.getElementById("newGameBtn");
+  const resetBtn = document.getElementById("resetBtn");
   const me = players.find((p) => p.id === myPlayerId);
   const activePlayers = players.filter((p) => !p.is_spectator);
 
   newGameBtn.classList.toggle("hidden", !(me && me.is_spectator));
+  resetBtn.classList.toggle("hidden", !(me && me.is_spectator));
 
   if (session.status === "finished") {
     banner.textContent = "🎉 Game finished!";
@@ -180,6 +181,16 @@ document.getElementById("rollBtn").addEventListener("click", async () => {
       .update({ status: "playing", current_turn_order: next.turn_order })
       .eq("id", session.id);
   }
+});
+
+document.getElementById("resetBtn").addEventListener("click", async () => {
+  if (!confirm("Reset every player back to Start on this board? Everyone stays joined.")) return;
+  await supabase
+    .from("players")
+    .update({ position: 0, is_finished: false })
+    .eq("session_id", session.id)
+    .eq("is_spectator", false);
+  await supabase.from("game_sessions").update({ status: "playing", current_turn_order: 0 }).eq("id", session.id);
 });
 
 document.getElementById("newGameBtn").addEventListener("click", async () => {
